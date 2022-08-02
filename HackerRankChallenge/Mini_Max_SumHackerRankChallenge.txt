@@ -1,0 +1,22 @@
+public static void miniMaxSum(List<int> arr)
+{
+    //get min and max values
+    int min = arr.Min();
+    int max = arr.Max();
+    
+    //create new Lists that are copies of the original List
+    List<int> minArr = new List<int>(arr);
+    List<int> maxArr = new List<int>(arr);
+    
+    //remove the maximum from the list that will sum for the minimum sum value
+    //remove the minimum from the list that will sum for the maximum sum value
+    minArr.Remove(max);
+    maxArr.Remove(min);
+    
+    //sum the lists
+    int minSum = minArr.Sum();
+    int maxSum = maxArr.Sum();
+    
+    //print the lists
+    Console.WriteLine($"{minSum} {maxSum}");
+} 
