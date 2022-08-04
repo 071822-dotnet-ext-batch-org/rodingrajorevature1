@@ -1,0 +1,33 @@
+public static string dayOfProgrammer(int year)
+{
+    string leapYear = $"12.09.{year}";
+    string notLeapYear = $"13.09.{year}";
+    string transitionYear = "26.09.1918";
+    
+    if (year < 1918)
+    {
+        if (year%4==0)
+        {
+            return leapYear;
+        }
+        
+        return notLeapYear;
+    }
+    
+    if (year == 1918)
+    {
+        return transitionYear;
+    }
+    
+    if (year > 1918)
+    {
+        if ((year%4==0 && year%100!=0) || (year%400==0))
+        {
+            return leapYear;
+        }
+        
+        return notLeapYear;
+    }
+    
+    return "";
+}
