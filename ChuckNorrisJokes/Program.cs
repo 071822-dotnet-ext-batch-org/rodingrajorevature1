@@ -10,29 +10,35 @@ namespace ChuckNorrisJokes
 {
     class Program
     {
+        // Create an httpclient object to connect to the URI
         private static readonly HttpClient client = new HttpClient();
     
-        private static async Task<Joke> ProcessJokes()
+        // Create a method to get data from the server and process the JSON file
+        // use the async modifier to make sure the processes can work asynchronously
+        // return a Task object (like a JS promise?) that promises to return a Joke object
+        private static async Task<Joke> ProcessJokes(string URI)
         {
-            var streamTask = client.GetStreamAsync("http://api.icndb.com/jokes/random/5");
+            // Get the stream of data asynchronously from the server
+            var streamTask = client.GetStreamAsync(URI);
+            // Use the JSON deserializer to turn the JSON string into a C# Joke Object
             var APIData = await JsonSerializer.DeserializeAsync<Joke>(await streamTask);
+    
             return APIData;
         }
 
-        static async Task Main(string[] args)
+        // Print the Joke object
+        private static void PrintJokes(Joke JokeData)
         {
-            Joke jokeData = await ProcessJokes();
+            Console.WriteLine(JokeData.Type);
 
-            Console.WriteLine(jokeData.Type);
-
-            foreach (Value joke in jokeData.Values)
+            foreach (Value value in JokeData.Values)
             {
-                Console.Write($"id: {joke.JokeID} ");
+                Console.Write($"id: {value.JokeID} ");
                 
                 Console.Write("categories: ");
-                if (joke.Categories.Count() > 0)
+                if (value.Categories.Count() > 0)
                 {
-                    foreach (string category in joke.Categories)
+                    foreach (string category in value.Categories)
                     Console.WriteLine(category + " ");
 
                 } else 
@@ -40,8 +46,19 @@ namespace ChuckNorrisJokes
                     Console.WriteLine("none");
                 }
 
-                Console.WriteLine($"joke: {joke.Joke}");
+                Console.WriteLine($"joke: {value.Joke}");
             }
+        }
+
+        static async Task Main(string[] args)
+        {
+            string FiveJokesURI = "http://api.icndb.com/jokes/random/5";
+            Joke FiveJokes = await ProcessJokes(FiveJokesURI);
+            PrintJokes(FiveJokes);
+
+            // string NerdyJokesURI = "http://api.icndb.com/jokes/random?limitTo=[nerdy]";
+            // Joke NerdyJokes = await ProcessJokes(NerdyJokesURI);
+            // PrintJokes(NerdyJokesURI);
         }
     }
 }
