@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace ChuckNorrisJokes
 {
-    public class Jokes
+    public class Joke
     {
         [JsonPropertyName("type")]
         public string Type { get; set; }
