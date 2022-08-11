@@ -23,7 +23,7 @@ namespace ChuckNorrisJokes
             // Use the JSON deserializer to turn the JSON string into a C# Joke Object
             var APIData = await JsonSerializer.DeserializeAsync<Joke>(await streamTask);
     
-            return APIData;
+            return;
         }
 
         // Print the Joke object
