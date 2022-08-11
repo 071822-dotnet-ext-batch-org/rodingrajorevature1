@@ -7,6 +7,7 @@ namespace HelloWorldAltered
         static void Main(string[] args)
         {
             Console.WriteLine("random string");
+            Console.ReadLine();
         }
     }
 }
