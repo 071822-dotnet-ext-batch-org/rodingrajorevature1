@@ -7,17 +7,21 @@ namespace ProjectOneModels
 {
     public class Manager : Employee
     {
-        public Manager(Employee employee, int newManager) : base(employee.Username, employee.Password, employee.Fname, employee.Lname, employee.Role, employee.Address, employee.Phone, newManager)
+        public Manager(Employee employee, int newManager) : base(employee.Username, employee.Password, employee.Fname, employee.Lname, employee.Role, employee.Address, employee.Phone, employee.Photo, employee.employeeID, newManager, employee.DateCreated)
         {
             this.Role = "Manager";
-            this.ManagerID = newManager;
-            this.EmployeeID = employee.EmployeeID;
         }
+        
         public void ProcessTicket(Ticket ticket, string status)
         {
-            if (ticket.Status == "Pending") 
+            if (ticket.Status == "Pending" && status == "Approved") 
             {
-                ticket.Status = status;
+                ticket.Approve();
+                Console.WriteLine($"Ticket has been {status.ToLower()}");
+            }
+            else if (ticket.Status == "Pending" && status == "Denied") 
+            {
+                ticket.Deny();
                 Console.WriteLine($"Ticket has been {status.ToLower()}");
             }
             else Console.WriteLine($"Ticket has already been {ticket.Status.ToLower()}");

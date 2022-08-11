@@ -1,7 +1,28 @@
-﻿namespace RepoLayer;
+﻿using dotenv.net;
+using System.Data.SqlClient;
 
-public class RepoLayer
+namespace RepoLayer;
+
+public class Repo
 {
-    
+
+    public void Connect()
+    {
+        DotEnv.Load();
+        IDictionary<string, string> envVars = DotEnv.Read();
+
+        SqlConnection conn = new SqlConnection(envVars["CONNSTRING"]);
+
+        SqlCommand command = new SqlCommand("SELECT * FROM dbo.Employee", conn);
+        conn.Open();
+        SqlDataReader myReader = command.ExecuteReader();
+
+        while (myReader.Read())
+        {
+            Console.WriteLine($"\t{myReader.GetInt32(0)}\t{myReader.GetString(1)}");
+        }
+
+        conn.Close();
+    }
 }
 

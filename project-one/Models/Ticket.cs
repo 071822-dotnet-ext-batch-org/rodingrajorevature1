@@ -7,23 +7,45 @@ namespace ProjectOneModels
 {
     public class Ticket : ITicket
     {
-        public int TicketID { get; set; } = null;
+        public int? TicketID { get; set; }
         public int Amount { get; set; }
         public string Description { get; set; }
-        public string Status { get; set; }
+        private string _status = "Pending";
         public string Type { get; set; }
-        public byte[] Receipt { get; set; }
+        public byte[]? Receipt { get; set; }
         public int FK_EmployeeID { get; set; }
-        public int FK_ManagerID { get; set; }
+        public DateTime? DateCreated { get; set; }
+        public DateTime? DateModified { get; set; }
+        public DateTime? DateProcessed { get; set; }
         
-        public Ticket(int amount, string description, string status, string type, int employeeID, int managerID)
+        
+        public Ticket(int amount, string description, string type, int employeeID, DateTime? dateCreated, DateTime? dateModified, DateTime? dateProcessed)
         {
             this.Amount = amount;
             this.Description = description;
-            this.Status = status;
             this.Type = type;
             this.FK_EmployeeID = employeeID;
             this.FK_ManagerID = managerID;
+            if (dateCreated) this.DateCreated = dateCreated;
+            if (dateModified) this.DateModified = dateModified;
+            if (dateProcessed) this.DateProcessed = dateProcessed; 
+        }
+
+        public string Status
+        {
+            get 
+            {
+                return this._status;
+            }
+        }
+        public void Approve()
+        {
+            this._status = "Approved";
+        }
+
+        public void Deny()
+        {
+            this._status = "Denied";
         }
     }
 }
