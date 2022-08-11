@@ -22,6 +22,4 @@ namespace InheritanceAndPolymorphism
 
         public abstract string GetCreator();
     }
-
-
 }
