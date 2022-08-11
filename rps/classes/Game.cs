@@ -16,5 +16,11 @@ namespace rps
         {
             Console.WriteLine("Rock! Paper! Scissors!");
         }
+
+        public static string NamePrompt()
+        {
+            Console.WriteLine("Enter your name: ");
+            return Console.ReadLine();
+        }
     }
 }
