@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BusinessLayer\BusinessLayer.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
+    <ProjectReference Include="..\RepoLayer\RepoLayer.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

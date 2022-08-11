@@ -7,9 +7,9 @@ namespace ProjectOneModels
 {
     public class Manager : Employee
     {
-        public Manager(Employee employee, int newManager) : base(employee.Username, employee.Password, employee.Fname, employee.Lname, employee.Role, employee.Address, employee.Phone, employee.Photo, employee.employeeID, newManager, employee.DateCreated)
+        public Manager(Employee employee, int? newManager) : base(employee.Username, employee.Password, employee.Fname, employee.Lname, employee.Address, employee.Phone, employee.Photo, employee.EmployeeID, newManager, employee.DateCreated, employee.DateModified)
         {
-            this.Role = "Manager";
+            this.ChangeRole("Manager");
         }
         
         public void ProcessTicket(Ticket ticket, string status)
@@ -27,17 +27,17 @@ namespace ProjectOneModels
             else Console.WriteLine($"Ticket has already been {ticket.Status.ToLower()}");
         }
 
-        public Manager PromoteEmployee(Employee employee)
+        public Manager PromoteEmployee(Employee employee, Manager newManager)
         {
-            Manager manager = new Manager(employee);
-            manager.Role = "Manager";
+            Manager manager = new Manager(employee, newManager.EmployeeID);
+            manager.ChangeRole("Manager");
             return manager;
         }
 
-        public Employee DemoteManager(Manager manager)
+        public Employee DemoteManager(Manager manager, Manager newManager)
         {
-            Employee employee = new Employee(manager);
-            employee.Role = "Employee";
+            Employee employee = new Employee(manager.Username, manager.Password, manager.Fname, manager.Lname, manager.Address, manager.Phone, manager.Photo, manager.EmployeeID, newManager.EmployeeID, manager.DateCreated, manager.DateModified);
+            employee.ChangeRole("Employee");
             return employee;
         }
     }

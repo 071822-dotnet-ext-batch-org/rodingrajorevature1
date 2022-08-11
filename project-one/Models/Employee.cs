@@ -28,11 +28,25 @@ namespace ProjectOneModels
             this.Lname = lname;
             this.Address = address;
             this.Phone = phone;
-            if (photo) this.Photo = photo;
-            if (employeeID) this.EmployeeID = employeeID;
-            if (managerID) this.ManagerID = managerID;
-            if (dateCreated) this.DateCreated = dateCreated;
-            if (dateModified) this.DateModified = dateModified;
+            if (photo!=null) this.Photo = photo;
+            if (employeeID!=null) this.EmployeeID = employeeID;
+            if (managerID!=null) this.ManagerID = managerID;
+            if (dateCreated!=null) this.DateCreated = dateCreated;
+            if (dateModified!=null) this.DateModified = dateModified;
         }
+
+        public string Role 
+        {
+            get 
+            {
+                return this._role;
+            }
+        }
+
+        public void ChangeRole(string newRole)
+        {
+            this._role = newRole;
+        }
+
     }
 }

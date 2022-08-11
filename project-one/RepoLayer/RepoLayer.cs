@@ -8,7 +8,7 @@ public class Repo
 
     public void Connect()
     {
-        DotEnv.Load();
+        DotEnv.Load(options: new DotEnvOptions(probeForEnv: true, probeLevelsToSearch: 3));
         IDictionary<string, string> envVars = DotEnv.Read();
 
         SqlConnection conn = new SqlConnection(envVars["CONNSTRING"]);

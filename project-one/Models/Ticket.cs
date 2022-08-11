@@ -25,10 +25,9 @@ namespace ProjectOneModels
             this.Description = description;
             this.Type = type;
             this.FK_EmployeeID = employeeID;
-            this.FK_ManagerID = managerID;
-            if (dateCreated) this.DateCreated = dateCreated;
-            if (dateModified) this.DateModified = dateModified;
-            if (dateProcessed) this.DateProcessed = dateProcessed; 
+            if (dateCreated!=null) this.DateCreated = dateCreated;
+            if (dateModified!=null) this.DateModified = dateModified;
+            if (dateProcessed!=null) this.DateProcessed = dateProcessed; 
         }
 
         public string Status
