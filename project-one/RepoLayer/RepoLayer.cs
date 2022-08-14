@@ -28,8 +28,10 @@ public class Repo
         _conn.Close();
     }
 
-    public async Task<Employee?> GetEmployeeByUsernameAsync(string username)
+    public async Task<Employee?> GetEmployeeByUsernameAsync(string? username)
     {
+        if(username == null) return null;
+
         int bufferSize = 100;
         byte[] outByte = new byte[bufferSize];
 
@@ -67,10 +69,11 @@ public class Repo
         }
     }
 
-    public async Task<int> InsertNewEmployeeAsync(Employee e)
+    public async Task<bool> InsertNewEmployeeAsync(Employee e)
     {
         using (SqlCommand command = new SqlCommand("INSERT INTO Employee (Username, Password, Fname, Lname, Role, Address, Phone) VALUES (@username, @password, @fname, @lname, @role, @address, @phone)", _conn))
         {
+            if(this.GetEmployeeByUsernameAsync(e.Username) != null) return false;
             command.Parameters.AddWithValue("@username", e.Username);
             command.Parameters.AddWithValue("@password", e.Password);
             command.Parameters.AddWithValue("@fname", e.Fname);
@@ -79,10 +82,27 @@ public class Repo
             command.Parameters.AddWithValue("@address", e.Address);
             command.Parameters.AddWithValue("@phone", e.Phone);
             _conn.Open();
-            int ret = await command.ExecuteNonQueryAsync();
+            bool ret = (await command.ExecuteNonQueryAsync()) == 1;
             _conn.Close();
             return ret;
         };
+    }
+
+    public async Task<bool> InsertNewTicketAsync(Ticket t)
+    {
+        using (SqlCommand command = new SqlCommand("INSERT INTO Ticket (Amount, Description, Status, Type, Receipt, FK_EmployeeID) VALUES (@amount, @description, @status, @type, @receipt, @employeeID)", _conn))
+        {
+            command.Parameters.AddWithValue("@amount", t.Amount);
+            command.Parameters.AddWithValue("@description", t.Description);
+            command.Parameters.AddWithValue("@status", t.Status);
+            command.Parameters.AddWithValue("@type", t.Type);
+            command.Parameters.AddWithValue("@receipt", t.Receipt);
+            command.Parameters.AddWithValue("@employeeID", t.FK_EmployeeID);
+            _conn.Open();
+            bool ret = (await command.ExecuteNonQueryAsync()) == 1;
+            _conn.Close();
+            return ret;
+        }
     }
 }
 

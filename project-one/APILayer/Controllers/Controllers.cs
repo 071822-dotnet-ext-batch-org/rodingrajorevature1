@@ -48,7 +48,7 @@ public class EmployeeManagementSystemController : ControllerBase
     [HttpPost("login")]
     public async Task<ActionResult> LoginAsync(string username, string password)
     {
-        return Ok(await this._bus.LoginAsync(username, password));
+        return Accepted(await this._bus.LoginAsync(username, password));
     }
 
     [HttpPost("register")]
@@ -62,7 +62,7 @@ public class EmployeeManagementSystemController : ControllerBase
         string phone
     )
     {
-        return Ok(await this._bus.RegisterNewUserAsync(
+        Employee? e = await this._bus.RegisterNewUserAsync(
             username, 
             password,
             fname, 
@@ -70,6 +70,41 @@ public class EmployeeManagementSystemController : ControllerBase
             role, 
             address, 
             phone
-        ));
+        );
+
+        if (e!=null) return Ok(e);
+        else return NotFound("Unable to create user.");
+    }
+
+    [HttpPost("submit-ticket")]
+    public async Task<ActionResult> SubmitTicketAsync(
+        decimal amount,
+        string description,
+        string type,
+        long? receipt
+    )
+    {
+        // TESTING IF IT WORKST, CHANGE BACK TO != null after LoggedIn is fixed)
+        if (this._bus.LoggedIn == null)
+        {
+            Ticket t = new Ticket(
+                amount,
+                description,
+                type,
+                receipt,
+                1001,
+                null,
+                null,
+                null
+            );
+            
+            this._bus.SubmitTicketAsync(t);
+
+            return Ok(t);
+        }
+        else
+        {
+            return NotFound("Please log in to create a ticket.");
+        }
     }
 }

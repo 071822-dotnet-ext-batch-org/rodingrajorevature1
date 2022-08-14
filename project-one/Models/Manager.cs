@@ -25,17 +25,17 @@ namespace ProjectOneModels
             this.ChangeRole("Manager");
         }
         
-        public void ProcessTicket(Ticket ticket, string status)
+        public void ProcessTicket(Ticket ticket, string newStatus)
         {
-            if (ticket.Status == "Pending" && status == "Approved") 
+            if (ticket.Status == "Pending" && newStatus == "Approved") 
             {
                 ticket.Approve();
-                Console.WriteLine($"Ticket has been {status.ToLower()}");
+                Console.WriteLine($"Ticket has been {newStatus.ToLower()}");
             }
-            else if (ticket.Status == "Pending" && status == "Denied") 
+            else if (ticket.Status == "Pending" && newStatus == "Denied") 
             {
                 ticket.Deny();
-                Console.WriteLine($"Ticket has been {status.ToLower()}");
+                Console.WriteLine($"Ticket has been {newStatus.ToLower()}");
             }
             else Console.WriteLine($"Ticket has already been {ticket.Status.ToLower()}");
         }

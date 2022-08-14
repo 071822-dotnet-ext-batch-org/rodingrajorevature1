@@ -5,11 +5,21 @@ namespace BusinessLayer;
 public class Bus
 {
     private Repo _repo = new Repo();
+    private Employee? _loggedIn = null;
+    public Employee? LoggedIn
+    {
+        get
+        {
+            return _loggedIn;
+        }
+    }
+
     public async Task<bool> LoginAsync(string username, string password)
     {
         Employee? e = await this._repo.GetEmployeeByUsernameAsync(username);
         if (e != null && e.Password == password)
         {
+            _loggedIn = e;
             return true;
         }
         else return false;
@@ -39,14 +49,25 @@ public class Bus
             null,
             null
         );
-        
-        int isSuccess = await this._repo.InsertNewEmployeeAsync(e);
 
-        if(isSuccess == 1)
+        if (await this._repo.InsertNewEmployeeAsync(e))
         {
-            return e;
+            return await this._repo.GetEmployeeByUsernameAsync(e.Username);
         }
-        else
+        else 
+        {
+            return null;
+        }
+    }
+
+    public async Task<Ticket?> SubmitTicketAsync(Ticket t)
+    {
+        if (await this._repo.InsertNewTicketAsync(t))
+        {
+            // return this._repo.GetNewestTicketFromEmployee(this.LoggedIn);
+            return t;
+        }
+        else 
         {
             return null;
         }

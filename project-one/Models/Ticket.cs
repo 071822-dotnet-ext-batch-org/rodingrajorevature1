@@ -8,7 +8,7 @@ namespace ProjectOneModels
     public class Ticket : ITicket
     {
         public int? TicketID { get; set; }
-        public int Amount { get; set; }
+        public decimal Amount { get; set; }
         public string Description { get; set; }
         private string _status = "Pending";
         public string Type { get; set; }
@@ -20,7 +20,7 @@ namespace ProjectOneModels
         
         
         public Ticket(
-            int amount, 
+            decimal amount, 
             string description, 
             string type, 
             long? receipt,
