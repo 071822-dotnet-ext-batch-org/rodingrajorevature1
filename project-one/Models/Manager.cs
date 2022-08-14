@@ -7,7 +7,20 @@ namespace ProjectOneModels
 {
     public class Manager : Employee
     {
-        public Manager(Employee employee, int? newManager) : base(employee.Username, employee.Password, employee.Fname, employee.Lname, employee.Address, employee.Phone, employee.Photo, employee.EmployeeID, newManager, employee.DateCreated, employee.DateModified)
+        public Manager(Employee employee, int? newManager) : base(
+            employee.Username, 
+            employee.Password, 
+            employee.Fname, 
+            employee.Lname, 
+            employee.Role,
+            employee.Address, 
+            employee.Phone, 
+            employee.Photo, 
+            employee.EmployeeID, 
+            newManager, 
+            employee.DateCreated, 
+            employee.DateModified
+        )
         {
             this.ChangeRole("Manager");
         }
@@ -36,7 +49,20 @@ namespace ProjectOneModels
 
         public Employee DemoteManager(Manager manager, Manager newManager)
         {
-            Employee employee = new Employee(manager.Username, manager.Password, manager.Fname, manager.Lname, manager.Address, manager.Phone, manager.Photo, manager.EmployeeID, newManager.EmployeeID, manager.DateCreated, manager.DateModified);
+            Employee employee = new Employee(
+                manager.Username, 
+                manager.Password, 
+                manager.Fname, 
+                manager.Lname,
+                manager.Role,
+                manager.Address, 
+                manager.Phone, 
+                manager.Photo, 
+                manager.EmployeeID, 
+                newManager.EmployeeID, 
+                manager.DateCreated, 
+                manager.DateModified
+            );
             employee.ChangeRole("Employee");
             return employee;
         }
