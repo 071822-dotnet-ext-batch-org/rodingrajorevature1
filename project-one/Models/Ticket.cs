@@ -14,6 +14,7 @@ namespace ProjectOneModels
         public string? Type { get; set; }
         public long? Receipt { get; set; }
         public Guid? FK_EmployeeID { get; set; }
+        public Guid? FK_ProcessingManagerID { get; set; }
         public DateTime? DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
         public DateTime? DateProcessed { get; set; }
@@ -21,11 +22,13 @@ namespace ProjectOneModels
         public Ticket() {}
         public Ticket(
             Guid? ticketID,
-            decimal amount, 
-            string description, 
-            string type, 
+            decimal? amount, 
+            string? description, 
+            string? type, 
+            string? status,
             long? receipt,
-            Guid employeeID, 
+            Guid? employeeID, 
+            Guid? processingManagerID,
             DateTime? dateCreated, 
             DateTime? dateModified, 
             DateTime? dateProcessed
@@ -35,8 +38,10 @@ namespace ProjectOneModels
             this.Amount = amount;
             this.Description = description;
             this.Type = type;
+            this._status = status;
             this.Receipt = receipt;
             this.FK_EmployeeID = employeeID;
+            this.FK_ProcessingManagerID = processingManagerID;
             if (dateCreated!=null) this.DateCreated = dateCreated;
             if (dateModified!=null) this.DateModified = dateModified;
             if (dateProcessed!=null) this.DateProcessed = dateProcessed; 

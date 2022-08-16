@@ -7,18 +7,18 @@ namespace ProjectOneModels
 {
     public class Manager : Employee
     {
-        public Manager(Employee employee, Guid? newManager) : base(
-            employee.EmployeeID,
-            employee.Username, 
-            employee.Password, 
-            employee.Fname, 
-            employee.Lname, 
-            employee.Address, 
-            employee.Phone, 
-            employee.Photo,
+        public Manager(Employee? employee, Guid? newManager) : base(
+            employee?.EmployeeID,
+            employee?.Username, 
+            employee?.Password, 
+            employee?.Fname, 
+            employee?.Lname, 
+            employee?.Address, 
+            employee?.Phone, 
+            employee?.Photo,
             newManager, 
-            employee.DateCreated, 
-            employee.DateModified
+            employee?.DateCreated, 
+            employee?.DateModified
         )
         {
             this.ChangeRole("Manager");

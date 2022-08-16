@@ -23,3 +23,65 @@
   "dateModified": null,
   "dateProcessed": null
 }
+
+{
+  "ticketID": "f6052912-5417-4bf0-9c37-45a752391afc",
+  "processingManagerID": "66d7154e-1b97-449b-986f-d348136bc3fd",
+  "newStatus": "Approved"
+}
+
+{
+  "ticketID": null,
+  "amount": 548.54,
+  "description": "Buying stuff",
+  "type": "Decorating",
+  "receipt": 0,
+  "fK_EmployeeID": "478797b0-8594-408b-b834-4d49aa3675ce",
+  "fK_ProcessingManagerID": "66d7154e-1b97-449b-986f-d348136bc3fd",
+  "dateCreated": null,
+  "dateModified": null,
+  "dateProcessed": null,
+  "status": null
+}
+
+{
+  "ticketID": null,
+  "amount": 5744874.53,
+  "description": "BRB Bankrupting Company",
+  "type": "Trolling",
+  "receipt": 0,
+  "fK_EmployeeID": "478797b0-8594-408b-b834-4d49aa3675ce",
+  "fK_ProcessingManagerID": "66d7154e-1b97-449b-986f-d348136bc3fd",
+  "dateCreated": null,
+  "dateModified": null,
+  "dateProcessed": null,
+  "status": null
+}
+
+{
+  "ticketID": null,
+  "amount": 12,
+  "description": "Beer",
+  "type": "Need alcohol",
+  "receipt": 0,
+  "fK_EmployeeID": "478797b0-8594-408b-b834-4d49aa3675ce",
+  "fK_ProcessingManagerID": null,
+  "dateCreated": null,
+  "dateModified": null,
+  "dateProcessed": null,
+  "status": null
+}
+
+{
+  "ticketID": null,
+  "amount": 10,
+  "description": "test",
+  "type": "test",
+  "receipt": 0,
+  "fK_EmployeeID": "478797b0-8594-408b-b834-4d49aa3675ce",
+  "fK_ProcessingManagerID": null,
+  "dateCreated": null,
+  "dateModified": null,
+  "dateProcessed": null,
+  "status": null
+}

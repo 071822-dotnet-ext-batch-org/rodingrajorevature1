@@ -39,20 +39,21 @@ public class Bus
 
     public async Task<bool> ProcessTicketAsync(ProcessTicketDTO p)
     {
-        Manager? m = await this._repo.GetEmployeeByIDAsync(p.ProcessingManagerID);
-        
-        if(m.Role != "Manager" || p.EmployeeTicket?.Status != "Pending")
+        Manager? m = new Manager((await this._repo.GetEmployeeByIDAsync(p.ProcessingManagerID)), null);
+        Ticket? t = await this._repo.GetTicketByIDAsync(p.TicketID);
+
+        if(m.Role != "Manager" || t?.Status != "Pending")
         {
             return false;
         }
 
         if(p.NewStatus == "Approved")
         {
-            p.EmployeeTicket.Approve();
+            t.Approve();
         }
         else if(p.NewStatus == "Denied")
         {
-            p.EmployeeTicket.Deny();
+            t.Deny();
         }
         else
         {
@@ -60,6 +61,18 @@ public class Bus
         }
 
         // Update ticket in database
-        return true;
+        bool isSuccess = await this._repo.UpdateTicketByIDAsync(t, m.EmployeeID);
+        return isSuccess;
+    }
+
+    public async Task<List<Ticket>?> GetMyTicketsAsync(Guid? employeeID, string? filterStatusBy)
+    {
+        Employee? e = await this._repo.GetEmployeeByIDAsync(employeeID);
+        
+        if (e == null) return null;
+
+        List<Ticket>? tickets = await this._repo.GetTicketsByEmployeeID(employeeID, filterStatusBy);
+
+        return tickets;
     }
 }

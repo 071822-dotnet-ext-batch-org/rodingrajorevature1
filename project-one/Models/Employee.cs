@@ -24,12 +24,12 @@ namespace ProjectOneModels
 
         public Employee(
             Guid? employeeID,
-            string username, 
-            string password, 
-            string fname, 
-            string lname, 
-            string address, 
-            string phone, 
+            string? username, 
+            string? password, 
+            string? fname, 
+            string? lname, 
+            string? address, 
+            string? phone, 
             long? photo, 
             Guid? managerID, 
             DateTime? dateCreated, 

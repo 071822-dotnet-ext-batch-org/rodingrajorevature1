@@ -7,15 +7,19 @@ namespace ProjectOneModels
 {
     public class ProcessTicketDTO
     {
-        public Ticket? EmployeeTicket;
-        public Guid? ProcessingManagerID;
-        public string? NewStatus;
+        public Guid? TicketID {get; set;}
+        public Guid? ProcessingManagerID {get; set;}
+        public string? NewStatus {get; set;}
 
         public ProcessTicketDTO() {}
 
-        public ProcessTicketDTO(Ticket employeeTicket, Guid processingManagerID, string newStatus)
+        public ProcessTicketDTO(
+            Guid? ticketID,
+            Guid? processingManagerID, 
+            string? newStatus
+        )
         {
-            this.EmployeeTicket = employeeTicket;
+            this.TicketID = ticketID;
             this.ProcessingManagerID = processingManagerID;
             this.NewStatus = newStatus;
         }

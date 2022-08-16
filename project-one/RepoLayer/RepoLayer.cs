@@ -66,6 +66,166 @@ public class Repo
         }
     }
 
+    public async Task<Employee?> GetEmployeeByIDAsync(Guid? employeeID)
+    {
+        int bufferSize = 100;
+        byte[] outByte = new byte[bufferSize];
+
+        SqlCommand? command = new SqlCommand("SELECT * FROM dbo.Employee WHERE EmployeeID = @employeeID", _conn);
+        command.Parameters.AddWithValue("@employeeID", employeeID);
+        _conn.Open();
+
+        SqlDataReader? ret = await command.ExecuteReaderAsync();
+        if (ret.Read())
+        {
+            Employee e = new Employee(
+                ret.GetGuid(0),
+                ret.GetString(1),
+                ret.GetString(2),
+                ret.GetString(3),
+                ret.GetString(4),
+                ret.GetString(5),
+                ret.GetString(6),
+                // ret.GetBytes(7, 0, outByte, 0, bufferSize),
+                null,
+                // ret.GetInt32(8),
+                null,
+                ret.GetDateTime(10),
+                ret.GetDateTime(11)
+            );
+
+            _conn.Close();
+            return e;
+        }
+        else
+        {
+            _conn.Close();
+            return null;
+        }
+    }
+
+    public async Task<List<Ticket>?> GetTicketsByEmployeeID(Guid? employeeID, string? filterStatusBy)
+    {
+        List<Ticket> tickets = new List<Ticket>();
+        int bufferSize = 100;
+        byte[] outByte = new byte[bufferSize];
+        SqlCommand? command;
+
+        if(filterStatusBy==null)
+        {
+            command = new SqlCommand("SELECT * FROM Ticket WHERE FK_EmployeeID = @employeeID", _conn);
+            command.Parameters.AddWithValue("@employeeID", employeeID);        
+        } 
+        else
+        {
+            command = new SqlCommand("SELECT * FROM Ticket WHERE FK_EmployeeID = @employeeID AND Status = @filterStatusBy", _conn);
+            command.Parameters.AddWithValue("@employeeID", employeeID);  
+            command.Parameters.AddWithValue("@filterStatusBy", filterStatusBy);  
+        }
+
+        _conn.Open();
+
+        SqlDataReader? ret = await command.ExecuteReaderAsync();
+
+        while(ret.Read())
+        {
+            long? receiptData = null;
+            Guid? processingManagerData = null;
+            DateTime? processDateData = null;
+
+            if(!(await ret.IsDBNullAsync(5))) 
+            {
+                receiptData = ret.GetBytes(5, 0, outByte, 0, bufferSize);
+            }
+
+            if(!(await ret.IsDBNullAsync(7)))
+            {
+                processingManagerData = ret.GetGuid(7);
+            }
+
+            if(!(await ret.IsDBNullAsync(10))) 
+            {
+                processDateData = ret.GetDateTime(10);
+            }
+
+            Ticket t = new Ticket(
+                ret.GetGuid(0),
+                (decimal)ret.GetSqlMoney(1),
+                ret.GetString(2),
+                ret.GetString(3),
+                ret.GetString(4),
+                receiptData,
+                ret.GetGuid(6),
+                processingManagerData,
+                ret.GetDateTime(8),
+                ret.GetDateTime(9),
+                processDateData
+            );
+
+            tickets.Add(t);
+        }
+
+        _conn.Close();
+
+        return tickets;
+    }
+
+    public async Task<Ticket?> GetTicketByIDAsync(Guid? ticketID)
+    {
+        int bufferSize = 100;
+        byte[] outByte = new byte[bufferSize];
+
+        SqlCommand? command = new SqlCommand("SELECT * FROM dbo.Ticket WHERE TicketID = @ticketID", _conn);
+        command.Parameters.AddWithValue("@ticketID", ticketID);
+        _conn.Open();
+
+        SqlDataReader? ret = await command.ExecuteReaderAsync();
+        if (ret.Read())
+        {
+            long? receiptData = null;
+            Guid? processingManagerData = null;
+            DateTime? processDateData = null;
+
+            if(!(await ret.IsDBNullAsync(5))) 
+            {
+                receiptData = ret.GetBytes(5, 0, outByte, 0, bufferSize);
+            }
+
+            if(!(await ret.IsDBNullAsync(7)))
+            {
+                processingManagerData = ret.GetGuid(7);
+            }
+
+            if(!(await ret.IsDBNullAsync(10))) 
+            {
+                processDateData = ret.GetDateTime(10);
+            }
+
+            
+            Ticket t = new Ticket
+            (
+                ret.GetGuid(0),
+                (decimal)ret.GetSqlMoney(1),
+                ret.GetString(2),
+                ret.GetString(3),
+                ret.GetString(4),
+                receiptData,
+                ret.GetGuid(6),
+                processingManagerData,
+                ret.GetDateTime(8),
+                ret.GetDateTime(9),
+                processDateData
+            );
+            _conn.Close();
+            return t;
+        }
+        else
+        {
+            _conn.Close();
+            return null;
+        }
+    }
+
     public async Task<bool> InsertNewEmployeeAsync(Employee e)
     {
         using (SqlCommand command = new SqlCommand("INSERT INTO Employee (EmployeeID, Username, Password, Fname, Lname, Role, Address, Phone, ManagerID) VALUES (@employeeID, @username, @password, @fname, @lname, @role, @address, @phone, @ManagerID)", _conn))
@@ -99,6 +259,20 @@ public class Repo
             command.Parameters.AddWithValue("@employeeID", t.FK_EmployeeID);
             _conn.Open();
             bool ret = (await command.ExecuteNonQueryAsync()) == 1;
+            _conn.Close();
+            return ret;
+        }
+    }
+
+    public async Task<bool> UpdateTicketByIDAsync(Ticket t, Guid? processingManagerID)
+    {
+        using (SqlCommand command = new SqlCommand("UPDATE [dbo].[Ticket] SET Status = @status, FK_ProcessingManagerID = @processingManagerID WHERE TicketID = @ticketID", _conn))
+        {
+            command.Parameters.AddWithValue("@status", t.Status);
+            command.Parameters.AddWithValue("@processingManagerID", processingManagerID);
+            command.Parameters.AddWithValue("@ticketID", t.TicketID);
+            _conn.Open();
+            bool ret = (await command.ExecuteNonQueryAsync()) > 0;
             _conn.Close();
             return ret;
         }

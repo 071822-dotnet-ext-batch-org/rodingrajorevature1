@@ -85,6 +85,18 @@ public class EmployeeManagementSystemController : ControllerBase
 
         if (!isSuccess) return NotFound("Unable to process ticket.");
 
-        return Created($"/{p.EmployeeTicket.FK_EmployeeID}/tickets/{p.EmployeeTicket.TicketID}", p.EmployeeTicket);
-    } 
+        return Created($"/tickets/{p.TicketID}", p);
+    }
+
+    [HttpGet("my-tickets")]
+    public async Task<ActionResult> GetMyTicketsAsync(Guid? employeeID, string? filterStatusBy)
+    {
+        List<Ticket>? myTickets = await this._bus.GetMyTicketsAsync(employeeID, filterStatusBy);
+
+        if (myTickets == null) return NotFound("Unable to find user.");
+        
+        if (myTickets.Count() == 0) return NotFound("No tickets found.");
+
+        return Ok(myTickets);
+    }
 }

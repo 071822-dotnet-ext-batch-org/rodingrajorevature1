@@ -1,7 +1,6 @@
 {
     "version": "0.2.0",
-    "configurations": [
-    
+    "configurations": [    
         {
             // Use IntelliSense to find out which attributes exist for C# debugging
             // Use hover for the description of the existing attributes
@@ -12,7 +11,10 @@
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/APILayer/bin/Debug/net6.0/APILayer.dll",
-            "args": [],
+            "args": ["-r linux-x64"],
+            "linux": {
+                "args": ["-r linux-x64"]
+            },
             "cwd": "${workspaceFolder}/APILayer",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
