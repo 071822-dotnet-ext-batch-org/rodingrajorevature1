@@ -7,29 +7,31 @@ namespace ProjectOneModels
 {
     public class Ticket : ITicket
     {
-        public int? TicketID { get; set; }
-        public decimal Amount { get; set; }
-        public string Description { get; set; }
-        private string _status = "Pending";
-        public string Type { get; set; }
+        public Guid? TicketID { get; set; } = Guid.NewGuid();
+        public decimal? Amount { get; set; }
+        public string? Description { get; set; }
+        private string? _status = "Pending";
+        public string? Type { get; set; }
         public long? Receipt { get; set; }
-        public int FK_EmployeeID { get; set; }
+        public Guid? FK_EmployeeID { get; set; }
         public DateTime? DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
         public DateTime? DateProcessed { get; set; }
         
-        
+        public Ticket() {}
         public Ticket(
+            Guid? ticketID,
             decimal amount, 
             string description, 
             string type, 
             long? receipt,
-            int employeeID, 
+            Guid employeeID, 
             DateTime? dateCreated, 
             DateTime? dateModified, 
             DateTime? dateProcessed
         )
         {
+            this.TicketID = ticketID;
             this.Amount = amount;
             this.Description = description;
             this.Type = type;
@@ -40,7 +42,7 @@ namespace ProjectOneModels
             if (dateProcessed!=null) this.DateProcessed = dateProcessed; 
         }
 
-        public string Status
+        public string? Status
         {
             get 
             {

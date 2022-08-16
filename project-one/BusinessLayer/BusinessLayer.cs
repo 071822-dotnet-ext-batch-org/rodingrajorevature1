@@ -25,51 +25,41 @@ public class Bus
         else return false;
     }
 
-    public async Task<Employee?> RegisterNewUserAsync(
-        string username, 
-        string password, 
-        string fname, 
-        string lname, 
-        string role,
-        string address, 
-        string phone
-    )
+    public async Task<bool> RegisterNewUserAsync(Employee e)
     {
-        Employee e = new Employee(
-            username, 
-            password,
-            fname, 
-            lname, 
-            role, 
-            address, 
-            phone,
-            null,
-            null,
-            null,
-            null,
-            null
-        );
-
-        if (await this._repo.InsertNewEmployeeAsync(e))
-        {
-            return await this._repo.GetEmployeeByUsernameAsync(e.Username);
-        }
-        else 
-        {
-            return null;
-        }
+        e.EmployeeID = Guid.NewGuid();
+        return await this._repo.InsertNewEmployeeAsync(e);
     }
 
-    public async Task<Ticket?> SubmitTicketAsync(Ticket t)
+    public async Task<bool> SubmitTicketAsync(Ticket t)
     {
-        if (await this._repo.InsertNewTicketAsync(t))
+        t.TicketID = Guid.NewGuid();
+        return await this._repo.InsertNewTicketAsync(t);
+    }
+
+    public async Task<bool> ProcessTicketAsync(ProcessTicketDTO p)
+    {
+        Manager? m = await this._repo.GetEmployeeByIDAsync(p.ProcessingManagerID);
+        
+        if(m.Role != "Manager" || p.EmployeeTicket?.Status != "Pending")
         {
-            // return this._repo.GetNewestTicketFromEmployee(this.LoggedIn);
-            return t;
+            return false;
         }
-        else 
+
+        if(p.NewStatus == "Approved")
         {
-            return null;
+            p.EmployeeTicket.Approve();
         }
+        else if(p.NewStatus == "Denied")
+        {
+            p.EmployeeTicket.Deny();
+        }
+        else
+        {
+            return false;
+        }
+
+        // Update ticket in database
+        return true;
     }
 }

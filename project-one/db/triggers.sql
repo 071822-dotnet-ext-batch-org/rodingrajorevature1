@@ -13,8 +13,9 @@ BEGIN
 END;
 
 UPDATE [dbo].[Employee]
-SET Address = "234 Train St."
-WHERE EmployeeID = 1000;
+SET Address = '234 Train St.'
+-- EmployeeID is a GUID
+WHERE EmployeeID = ;
 
 CREATE TRIGGER TicketUpdateDateModified
 ON [dbo].[Ticket]
@@ -28,7 +29,8 @@ END;
 
 UPDATE [dbo].[Ticket]
 SET Amount = 150.20
-WHERE TicketID = 100;
+-- TicketID is a GUID
+WHERE TicketID = ;
 
 CREATE TRIGGER TicketUpdateDateProcessed
 ON [dbo].[Ticket]
@@ -43,8 +45,10 @@ END;
 
 UPDATE [dbo].[Ticket]
 SET Amount = 125.45
-WHERE TicketID = 100;
+-- TicketID is a GUID
+WHERE TicketID = ;
 
 UPDATE [dbo].[Ticket]
 SET Status = "Approved"
-WHERE TicketID = 100;
+-- TicketID is a GUID
+WHERE TicketID = ;

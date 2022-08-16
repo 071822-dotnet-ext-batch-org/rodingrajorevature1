@@ -46,65 +46,45 @@ public class EmployeeManagementSystemController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> LoginAsync(string username, string password)
+    public async Task<ActionResult> LoginAsync(LoginDTO login)
     {
-        return Accepted(await this._bus.LoginAsync(username, password));
-    }
-
-    [HttpPost("register")]
-    public async Task<ActionResult> RegisterNewUserAsync(
-        string username, 
-        string password, 
-        string fname, 
-        string lname, 
-        string role,
-        string address, 
-        string phone
-    )
-    {
-        Employee? e = await this._bus.RegisterNewUserAsync(
-            username, 
-            password,
-            fname, 
-            lname, 
-            role, 
-            address, 
-            phone
-        );
-
-        if (e!=null) return Ok(e);
-        else return NotFound("Unable to create user.");
-    }
-
-    [HttpPost("submit-ticket")]
-    public async Task<ActionResult> SubmitTicketAsync(
-        decimal amount,
-        string description,
-        string type,
-        long? receipt
-    )
-    {
-        // TESTING IF IT WORKST, CHANGE BACK TO != null after LoggedIn is fixed)
-        if (this._bus.LoggedIn == null)
+        if(ModelState.IsValid)
         {
-            Ticket t = new Ticket(
-                amount,
-                description,
-                type,
-                receipt,
-                1001,
-                null,
-                null,
-                null
-            );
-            
-            this._bus.SubmitTicketAsync(t);
-
-            return Ok(t);
+            return Accepted(await this._bus.LoginAsync(login.Username, login.Password));
         }
         else
         {
-            return NotFound("Please log in to create a ticket.");
+            return NotFound("Unable to login");
         }
     }
+
+    [HttpPost("register")]
+    public async Task<ActionResult> RegisterNewUserAsync(Employee e)
+    {
+        bool isSuccess = await this._bus.RegisterNewUserAsync(e);
+
+        if (!isSuccess) return NotFound("Unable to create user.");
+
+        return Created($"/employee/{e.EmployeeID}", e);
+    }
+
+    [HttpPost("submit-ticket")]
+    public async Task<ActionResult> SubmitTicketAsync(Ticket t)
+    {
+        bool isSuccess = await this._bus.SubmitTicketAsync(t);
+
+        if (!isSuccess) return NotFound("Unable to create ticket.");
+
+        return Created($"/{t.FK_EmployeeID}/tickets/{t.TicketID}", t);
+    }
+
+    [HttpPost("process-ticket")]
+    public async Task<ActionResult> ProcessTicketAsync(ProcessTicketDTO p)
+    {
+        bool isSuccess = await this._bus.ProcessTicketAsync(p);
+
+        if (!isSuccess) return NotFound("Unable to process ticket.");
+
+        return Created($"/{p.EmployeeTicket.FK_EmployeeID}/tickets/{p.EmployeeTicket.TicketID}", p.EmployeeTicket);
+    } 
 }

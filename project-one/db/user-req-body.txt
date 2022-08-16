@@ -1,0 +1,25 @@
+{
+  "username": "testuser4",
+  "password": "password",
+  "fname": "Jon",
+  "lname": "Hammond",
+  "address": "250 Stego Way",
+  "phone": "984-987-9874",
+  "photo": 0,
+  "employeeID": null,
+  "managerID": "1f05dfc2-3d51-46ca-b83f-a10cf687852b",
+  "dateCreated": null,
+  "dateModified": null
+}
+
+{
+  "ticketID": null,
+  "amount": 100.5,
+  "description": "Stuff",
+  "type": "Things",
+  "receipt": 0,
+  "FK_EmployeeID": "22ecdb08-e1cf-4882-9441-f4c35fe775c3",
+  "dateCreated": null,
+  "dateModified": null,
+  "dateProcessed": null
+}
