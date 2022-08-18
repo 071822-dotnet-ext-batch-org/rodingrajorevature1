@@ -104,23 +104,36 @@ public class Repo
         }
     }
 
-    public async Task<List<Ticket>?> GetTicketsByEmployeeID(Guid? employeeID, string? filterStatusBy)
+    public async Task<List<Ticket>?> GetTicketsByEmployeeID(Guid? employeeID, string? filterStatusBy, string? filterTypeBy)
     {
         List<Ticket> tickets = new List<Ticket>();
         int bufferSize = 100;
         byte[] outByte = new byte[bufferSize];
         SqlCommand? command;
 
-        if(filterStatusBy==null)
+        if(filterStatusBy==null && filterTypeBy==null)
         {
             command = new SqlCommand("SELECT * FROM Ticket WHERE FK_EmployeeID = @employeeID", _conn);
             command.Parameters.AddWithValue("@employeeID", employeeID);        
         } 
-        else
+        else if(filterTypeBy==null)
         {
-            command = new SqlCommand("SELECT * FROM Ticket WHERE FK_EmployeeID = @employeeID AND Status = @filterStatusBy", _conn);
+            command = new SqlCommand("SELECT * FROM Ticket WHERE FK_EmployeeID = @employeeID AND Status = @filterStatusBy ", _conn);
             command.Parameters.AddWithValue("@employeeID", employeeID);  
             command.Parameters.AddWithValue("@filterStatusBy", filterStatusBy);  
+        }
+        else if(filterStatusBy==null)
+        {
+            command = new SqlCommand("SELECT * FROM Ticket WHERE FK_EmployeeID = @employeeID AND Type = @filterTypeBy ", _conn);
+            command.Parameters.AddWithValue("@employeeID", employeeID);  
+            command.Parameters.AddWithValue("@filterTypeBy", filterTypeBy);  
+        }
+        else
+        {
+            command = new SqlCommand("SELECT * FROM Ticket WHERE FK_EmployeeID = @employeeID AND Status = @filterStatusBy AND Type = @filterTypeBy", _conn);
+            command.Parameters.AddWithValue("@employeeID", employeeID);  
+            command.Parameters.AddWithValue("@filterStatusBy", filterStatusBy);  
+            command.Parameters.AddWithValue("@filterTypeBy", filterTypeBy);  
         }
 
         _conn.Open();
@@ -168,6 +181,76 @@ public class Repo
         _conn.Close();
 
         return tickets;
+    }
+
+    public async Task<UpdateEmployeeDTO?> UpdateEmployeeInfo(UpdateEmployeeDTO ueDTO, Guid employeeID)
+    {
+        using SqlCommand? command = new SqlCommand("UPDATE Employee SET Username = @username, Password = @password, Fname = @fname, Lname = @lname, Address = @address, Phone = @phone WHERE EmployeeID = @employeeID", _conn);
+        command.Parameters.AddWithValue("@employeeID", employeeID);
+        command.Parameters.AddWithValue("@username", ueDTO.Username);
+        command.Parameters.AddWithValue("@password", ueDTO.Password);
+        command.Parameters.AddWithValue("@fname", ueDTO.Fname);
+        command.Parameters.AddWithValue("@lname", ueDTO.Lname);
+        command.Parameters.AddWithValue("@address", ueDTO.Address);
+        command.Parameters.AddWithValue("@phone", ueDTO.Phone);
+
+        _conn.Open();
+        int ret = await command.ExecuteNonQueryAsync(); 
+        _conn.Close();
+
+        if(ret < 1) return null;
+
+        return ueDTO;
+    }
+
+    public async Task<byte[]?> GetEmployeePhoto(Guid employeeID)
+    {
+        using SqlCommand? command = new SqlCommand("SELECT Photo FROM Employee WHERE EmployeeID = @employeeID", _conn);
+        command.Parameters.AddWithValue("@employeeID", employeeID);
+        
+        _conn.Open();
+        byte[]? photoData = (byte[]?)(await command.ExecuteScalarAsync());
+        _conn.Close();
+
+        return photoData;
+    }
+
+    public async Task<bool> UpdateEmployeePhotoAsync(byte[] photo, Guid employeeID)
+    {
+        using SqlCommand? command = new SqlCommand("UPDATE [dbo].[Employee] SET Photo = @photo WHERE EmployeeID = @employeeID", _conn);
+        command.Parameters.AddWithValue("@photo", photo);
+        command.Parameters.AddWithValue("@employeeID", employeeID);
+
+        _conn.Open();
+        bool ret = (await command.ExecuteNonQueryAsync()) > 0;
+        _conn.Close();
+
+        return ret;
+    }
+
+    public async Task<byte[]?> GetReceiptPhoto(Guid ticketID)
+    {
+        using SqlCommand? command = new SqlCommand("SELECT Receipt FROM Ticket Where TicketID = @ticketID", _conn);
+        command.Parameters.AddWithValue("@ticketID", ticketID);
+        
+        _conn.Open();
+        byte[]? photoData = (byte[]?)(await command.ExecuteScalarAsync());
+        _conn.Close();
+
+        return photoData;
+    }
+
+    public async Task<bool> UpdateTicketPhotoAsync(byte[] photo, Guid ticketID)
+    {
+        using SqlCommand? command = new SqlCommand("UPDATE [dbo].[Ticket] SET Receipt = @photo WHERE TicketID = @ticketID", _conn);
+        command.Parameters.AddWithValue("@photo", photo);
+        command.Parameters.AddWithValue("@ticketID", ticketID);
+
+        _conn.Open();
+        bool ret = (await command.ExecuteNonQueryAsync()) > 0;
+        _conn.Close();
+
+        return ret;
     }
 
     public async Task<Ticket?> GetTicketByIDAsync(Guid? ticketID)
@@ -271,6 +354,20 @@ public class Repo
             command.Parameters.AddWithValue("@status", t.Status);
             command.Parameters.AddWithValue("@processingManagerID", processingManagerID);
             command.Parameters.AddWithValue("@ticketID", t.TicketID);
+            _conn.Open();
+            bool ret = (await command.ExecuteNonQueryAsync()) > 0;
+            _conn.Close();
+            return ret;
+        }
+    }
+
+    public async Task<bool> UpdateEmployeeRoleByIDAsync(Guid? employeeID, Guid? newManagerID, string? newRole)
+    {
+        using (SqlCommand command = new SqlCommand("UPDATE [dbo].[Employee] SET Role = @newRole, ManagerID = @newManager WHERE EmployeeID = @employeeID", _conn))
+        {
+            command.Parameters.AddWithValue("@newRole", newRole);
+            command.Parameters.AddWithValue("@newManager", newManagerID);
+            command.Parameters.AddWithValue("@employeeID", employeeID);
             _conn.Open();
             bool ret = (await command.ExecuteNonQueryAsync()) > 0;
             _conn.Close();

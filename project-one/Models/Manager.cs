@@ -24,17 +24,17 @@ namespace ProjectOneModels
             this.ChangeRole("Manager");
         }
         
-        public Manager PromoteEmployee(Employee employee, Manager? newManager)
+        public Manager PromoteEmployee(Employee? employee, Manager? newManager)
         {
             Manager manager = new Manager(employee, newManager?.EmployeeID);
             manager.ChangeRole("Manager");
             return manager;
         }
 
-        public Employee? DemoteManager(Manager manager, Manager newEmployee, Manager? newManager)
+        public Employee? DemoteManager(Manager? manager, Manager? newManager)
         {
 
-            if(manager.Role == "Manager")
+            if(manager?.Role == "Manager")
             {
                 Employee employee = new Employee(
                     manager.EmployeeID,
