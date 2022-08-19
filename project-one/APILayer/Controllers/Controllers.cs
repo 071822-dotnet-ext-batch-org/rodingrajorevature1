@@ -45,40 +45,40 @@ public class EmployeeManagementSystemController : ControllerBase
         _logger = logger;
     }
 
-    [HttpPost("login")]
+    [HttpPost("employees/login")]
     public async Task<ActionResult> LoginAsync(LoginDTO login)
     {
         if(ModelState.IsValid)
         {
-            return Accepted(await this._bus.LoginAsync(login.Username, login.Password));
+            return Ok(await this._bus.LoginAsync(login.Username, login.Password));
         }
         else
         {
-            return NotFound("Unable to login");
+            return Unauthorized("Unable to login");
         }
     }
 
-    [HttpPost("register")]
-    public async Task<ActionResult> RegisterNewUserAsync(Employee e)
+    [HttpPost("employees/register")]
+    public async Task<ActionResult> RegisterNewUserAsync(RegisterDTO r)
     {
-        bool isSuccess = await this._bus.RegisterNewUserAsync(e);
+        Employee? newUser = await this._bus.RegisterNewUserAsync(r);
 
-        if (!isSuccess) return NotFound("Unable to create user.");
+        if (newUser == null) return NotFound("Unable to create user.");
 
-        return Created($"/employee/{e.EmployeeID}", e);
+        return Created($"/employee/{newUser.EmployeeID}", newUser);
     }
 
-    [HttpPost("submit-ticket")]
-    public async Task<ActionResult> SubmitTicketAsync(Ticket t)
+    [HttpPost("tickets/submit-ticket")]
+    public async Task<ActionResult> SubmitTicketAsync(SubmitTicketDTO s)
     {
-        bool isSuccess = await this._bus.SubmitTicketAsync(t);
+        Ticket? newTicket = await this._bus.SubmitTicketAsync(s);
 
-        if (!isSuccess) return NotFound("Unable to create ticket.");
+        if (newTicket == null) return NotFound("Unable to create ticket.");
 
-        return Created($"/{t.FK_EmployeeID}/tickets/{t.TicketID}", t);
+        return Created($"/{newTicket.FK_EmployeeID}/tickets/{newTicket.TicketID}", newTicket);
     }
 
-    [HttpPut("process-ticket")]
+    [HttpPut("tickets/process-ticket")]
     public async Task<ActionResult> ProcessTicketAsync(ProcessTicketDTO p)
     {
         bool isSuccess = await this._bus.ProcessTicketAsync(p);
@@ -100,7 +100,7 @@ public class EmployeeManagementSystemController : ControllerBase
         return Ok(myTickets);
     }
 
-    [HttpPut("change-role")]
+    [HttpPut("employees/change-role")]
     public async Task<ActionResult> ChangeEmployeeRole(ChangeRoleDTO c)
     {
         bool isSuccess = false;
@@ -117,10 +117,10 @@ public class EmployeeManagementSystemController : ControllerBase
 
         if (!isSuccess) return NotFound("Could not make changes to employee");
 
-        return Created($"/{c.RoleChangingEmployeeID}", c.NewRole);
+        return Created($"employees/{c.RoleChangingEmployeeID}/role", c.NewRole);
     }
 
-    [HttpPut("{ticketID}/upload/receipt-photo")]
+    [HttpPut("tickets/{ticketID}/upload/receipt-photo")]
     public async Task<ActionResult> UploadReceiptPhoto(IFormFile imageFile, Guid ticketID)
     {
         long fileLength = imageFile.Length;
@@ -134,13 +134,13 @@ public class EmployeeManagementSystemController : ControllerBase
 
         if (await this._bus.UploadReceiptPhoto(fileStream, ticketID))
         {
-            return Created("{ticketID}/photo", imageFile);
+            return Created("tickets/{ticketID}/photo", imageFile);
         }
 
         return BadRequest();
     }
 
-    [HttpGet("{ticketID}/receipt-photo")]
+    [HttpGet("tickets/{ticketID}/receipt-photo")]
     public async Task<ActionResult> GetReceiptPhoto(Guid ticketID)
     {
         byte[]? receiptPhoto = await this._bus.GetReceiptPhoto(ticketID);
@@ -150,7 +150,7 @@ public class EmployeeManagementSystemController : ControllerBase
         return File(receiptPhoto, "image/png");
     }
 
-    [HttpPut("{employeeID}/upload-photo")]
+    [HttpPut("employees/{employeeID}/upload-photo")]
     public async Task<ActionResult> UploadEmployeePhoto(IFormFile imageFile, Guid employeeID)
     {
         long fileLength = imageFile.Length;
@@ -170,7 +170,7 @@ public class EmployeeManagementSystemController : ControllerBase
         return BadRequest();
     }
 
-    [HttpGet("{employeeID}/photo")]
+    [HttpGet("employees/{employeeID}/photo")]
     public async Task<ActionResult> GetEmployeePhoto(Guid employeeID)
     {
         byte[]? employeePhoto = await this._bus.GetEmployeePhoto(employeeID);
@@ -180,7 +180,7 @@ public class EmployeeManagementSystemController : ControllerBase
         return File(employeePhoto, "image/png");
     }
 
-    [HttpPut("{employeeID}/update-info")]
+    [HttpPut("employees/{employeeID}/update-info")]
     public async Task<ActionResult> UpdateEmployeeInfo(UpdateEmployeeDTO ueDTO, Guid employeeID)
     {
         UpdateEmployeeDTO? updatedEmployee = await this._bus.UpdateEmployeeInfo(ueDTO, employeeID);

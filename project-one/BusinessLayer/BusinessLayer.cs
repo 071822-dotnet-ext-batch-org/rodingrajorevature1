@@ -25,16 +25,30 @@ public class Bus
         else return false;
     }
 
-    public async Task<bool> RegisterNewUserAsync(Employee e)
+    public async Task<Employee?> RegisterNewUserAsync(RegisterDTO r)
     {
-        e.EmployeeID = Guid.NewGuid();
-        return await this._repo.InsertNewEmployeeAsync(e);
+        Guid id = Guid.NewGuid();
+
+        if(await this._repo.InsertNewEmployeeAsync(r, id))
+        {
+            Employee? e = await this._repo.GetEmployeeByIDAsync(id);
+            return e;
+        }
+
+        return null;
     }
 
-    public async Task<bool> SubmitTicketAsync(Ticket t)
+    public async Task<Ticket?> SubmitTicketAsync(SubmitTicketDTO s)
     {
-        t.TicketID = Guid.NewGuid();
-        return await this._repo.InsertNewTicketAsync(t);
+        s.TicketID = Guid.NewGuid();
+        Ticket t = new Ticket(s);
+
+        if(await this._repo.InsertNewTicketAsync(t))
+        {
+            return await this._repo.GetTicketByIDAsync(s.TicketID);
+        }
+
+        return null;
     }
 
     public async Task<bool> ProcessTicketAsync(ProcessTicketDTO p)

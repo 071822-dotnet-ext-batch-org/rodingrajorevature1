@@ -28,6 +28,7 @@ namespace ProjectOneModels
             string? password, 
             string? fname, 
             string? lname, 
+            string? role,
             string? address, 
             string? phone, 
             long? photo, 
@@ -41,6 +42,7 @@ namespace ProjectOneModels
             this.Password = password;
             this.Fname = fname;
             this.Lname = lname;
+            this._role = role;
             this.Address = address;
             this.Phone = phone;
             if (photo!=null) this.Photo = photo;

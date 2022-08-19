@@ -47,6 +47,15 @@ namespace ProjectOneModels
             if (dateProcessed!=null) this.DateProcessed = dateProcessed; 
         }
 
+        public Ticket(SubmitTicketDTO s)
+        {
+            this.TicketID = s.TicketID;
+            this.Amount = s.Amount;
+            this.Description = s.Description;
+            this.Type = s.Type;
+            this.FK_EmployeeID = s.FK_EmployeeID;
+        }
+
         public string? Status
         {
             get 

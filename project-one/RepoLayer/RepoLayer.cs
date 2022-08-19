@@ -40,6 +40,13 @@ public class Repo
         SqlDataReader? ret = await command.ExecuteReaderAsync();
         if (ret.Read())
         {
+            Guid? managerID = null;
+
+            if(!(await ret.IsDBNullAsync(8)))
+            {
+                managerID = ret.GetGuid(8);
+            }
+
             Employee e = new Employee(
                 ret.GetGuid(0),
                 ret.GetString(1),
@@ -48,10 +55,10 @@ public class Repo
                 ret.GetString(4),
                 ret.GetString(5),
                 ret.GetString(6),
-                // ret.GetBytes(7, 0, outByte, 0, bufferSize),
+                ret.GetString(7),
+                // ret.GetBytes(8, 0, outByte, 0, bufferSize),
                 null,
-                // ret.GetInt32(8),
-                null,
+                managerID,
                 ret.GetDateTime(10),
                 ret.GetDateTime(11)
             );
@@ -71,13 +78,20 @@ public class Repo
         int bufferSize = 100;
         byte[] outByte = new byte[bufferSize];
 
-        SqlCommand? command = new SqlCommand("SELECT * FROM dbo.Employee WHERE EmployeeID = @employeeID", _conn);
+        SqlCommand command = new SqlCommand("SELECT * FROM dbo.Employee WHERE EmployeeID = @employeeID", _conn);
         command.Parameters.AddWithValue("@employeeID", employeeID);
         _conn.Open();
 
         SqlDataReader? ret = await command.ExecuteReaderAsync();
         if (ret.Read())
         {
+            Guid? managerID = null;
+
+            if(!(await ret.IsDBNullAsync(9)))
+            {
+                managerID = ret.GetGuid(9);
+            }
+
             Employee e = new Employee(
                 ret.GetGuid(0),
                 ret.GetString(1),
@@ -86,10 +100,10 @@ public class Repo
                 ret.GetString(4),
                 ret.GetString(5),
                 ret.GetString(6),
-                // ret.GetBytes(7, 0, outByte, 0, bufferSize),
+                ret.GetString(7),
+                // ret.GetBytes(8, 0, outByte, 0, bufferSize),
                 null,
-                // ret.GetInt32(8),
-                null,
+                managerID,
                 ret.GetDateTime(10),
                 ret.GetDateTime(11)
             );
@@ -109,7 +123,7 @@ public class Repo
         List<Ticket> tickets = new List<Ticket>();
         int bufferSize = 100;
         byte[] outByte = new byte[bufferSize];
-        SqlCommand? command;
+        SqlCommand command;
 
         if(filterStatusBy==null && filterTypeBy==null)
         {
@@ -185,7 +199,7 @@ public class Repo
 
     public async Task<UpdateEmployeeDTO?> UpdateEmployeeInfo(UpdateEmployeeDTO ueDTO, Guid employeeID)
     {
-        using SqlCommand? command = new SqlCommand("UPDATE Employee SET Username = @username, Password = @password, Fname = @fname, Lname = @lname, Address = @address, Phone = @phone WHERE EmployeeID = @employeeID", _conn);
+        using SqlCommand command = new SqlCommand("UPDATE Employee SET Username = @username, Password = @password, Fname = @fname, Lname = @lname, Address = @address, Phone = @phone WHERE EmployeeID = @employeeID", _conn);
         command.Parameters.AddWithValue("@employeeID", employeeID);
         command.Parameters.AddWithValue("@username", ueDTO.Username);
         command.Parameters.AddWithValue("@password", ueDTO.Password);
@@ -205,7 +219,7 @@ public class Repo
 
     public async Task<byte[]?> GetEmployeePhoto(Guid employeeID)
     {
-        using SqlCommand? command = new SqlCommand("SELECT Photo FROM Employee WHERE EmployeeID = @employeeID", _conn);
+        using SqlCommand command = new SqlCommand("SELECT Photo FROM Employee WHERE EmployeeID = @employeeID", _conn);
         command.Parameters.AddWithValue("@employeeID", employeeID);
         
         _conn.Open();
@@ -217,7 +231,7 @@ public class Repo
 
     public async Task<bool> UpdateEmployeePhotoAsync(byte[] photo, Guid employeeID)
     {
-        using SqlCommand? command = new SqlCommand("UPDATE [dbo].[Employee] SET Photo = @photo WHERE EmployeeID = @employeeID", _conn);
+        using SqlCommand command = new SqlCommand("UPDATE [dbo].[Employee] SET Photo = @photo WHERE EmployeeID = @employeeID", _conn);
         command.Parameters.AddWithValue("@photo", photo);
         command.Parameters.AddWithValue("@employeeID", employeeID);
 
@@ -230,7 +244,7 @@ public class Repo
 
     public async Task<byte[]?> GetReceiptPhoto(Guid ticketID)
     {
-        using SqlCommand? command = new SqlCommand("SELECT Receipt FROM Ticket Where TicketID = @ticketID", _conn);
+        using SqlCommand command = new SqlCommand("SELECT Receipt FROM Ticket Where TicketID = @ticketID", _conn);
         command.Parameters.AddWithValue("@ticketID", ticketID);
         
         _conn.Open();
@@ -242,7 +256,7 @@ public class Repo
 
     public async Task<bool> UpdateTicketPhotoAsync(byte[] photo, Guid ticketID)
     {
-        using SqlCommand? command = new SqlCommand("UPDATE [dbo].[Ticket] SET Receipt = @photo WHERE TicketID = @ticketID", _conn);
+        using SqlCommand command = new SqlCommand("UPDATE [dbo].[Ticket] SET Receipt = @photo WHERE TicketID = @ticketID", _conn);
         command.Parameters.AddWithValue("@photo", photo);
         command.Parameters.AddWithValue("@ticketID", ticketID);
 
@@ -258,7 +272,7 @@ public class Repo
         int bufferSize = 100;
         byte[] outByte = new byte[bufferSize];
 
-        SqlCommand? command = new SqlCommand("SELECT * FROM dbo.Ticket WHERE TicketID = @ticketID", _conn);
+        SqlCommand command = new SqlCommand("SELECT * FROM dbo.Ticket WHERE TicketID = @ticketID", _conn);
         command.Parameters.AddWithValue("@ticketID", ticketID);
         _conn.Open();
 
@@ -309,19 +323,19 @@ public class Repo
         }
     }
 
-    public async Task<bool> InsertNewEmployeeAsync(Employee e)
+    public async Task<bool> InsertNewEmployeeAsync(RegisterDTO r, Guid id)
     {
-        using (SqlCommand command = new SqlCommand("INSERT INTO Employee (EmployeeID, Username, Password, Fname, Lname, Role, Address, Phone, ManagerID) VALUES (@employeeID, @username, @password, @fname, @lname, @role, @address, @phone, @ManagerID)", _conn))
+        using (SqlCommand command = new SqlCommand("INSERT INTO Employee (EmployeeID, Username, Password, Fname, Lname, Role, Address, Phone, ManagerID) VALUES (@employeeID, @username, @password, @fname, @lname, @role, @address, @phone, @managerID)", _conn))
         {
-            command.Parameters.AddWithValue("@employeeID", e.EmployeeID);
-            command.Parameters.AddWithValue("@username", e.Username);
-            command.Parameters.AddWithValue("@password", e.Password);
-            command.Parameters.AddWithValue("@fname", e.Fname);
-            command.Parameters.AddWithValue("@lname", e.Lname);
-            command.Parameters.AddWithValue("@role", e.Role);
-            command.Parameters.AddWithValue("@address", e.Address);
-            command.Parameters.AddWithValue("@phone", e.Phone);
-            command.Parameters.AddWithValue("@managerID", e.ManagerID);
+            command.Parameters.AddWithValue("@employeeID", id);
+            command.Parameters.AddWithValue("@username", r.Username);
+            command.Parameters.AddWithValue("@password", r.Password);
+            command.Parameters.AddWithValue("@fname", r.Fname);
+            command.Parameters.AddWithValue("@lname", r.Lname);
+            command.Parameters.AddWithValue("@role", "Employee");
+            command.Parameters.AddWithValue("@address", r.Address);
+            command.Parameters.AddWithValue("@phone", r.Phone);
+            command.Parameters.AddWithValue("@managerID", r.ManagerID);
             _conn.Open();
             bool ret = (await command.ExecuteNonQueryAsync()) == 1;
             _conn.Close();
@@ -331,14 +345,13 @@ public class Repo
 
     public async Task<bool> InsertNewTicketAsync(Ticket t)
     {
-        using (SqlCommand command = new SqlCommand("INSERT INTO Ticket (TicketID, Amount, Description, Status, Type, Receipt, FK_EmployeeID) VALUES (@ticketID, @amount, @description, @status, @type, @receipt, @employeeID)", _conn))
+        using (SqlCommand command = new SqlCommand("INSERT INTO Ticket (TicketID, Amount, Description, Status, Type, FK_EmployeeID) VALUES (@ticketID, @amount, @description, @status, @type, @employeeID)", _conn))
         {
             command.Parameters.AddWithValue("@ticketID", t.TicketID);
             command.Parameters.AddWithValue("@amount", t.Amount);
             command.Parameters.AddWithValue("@description", t.Description);
             command.Parameters.AddWithValue("@status", t.Status);
             command.Parameters.AddWithValue("@type", t.Type);
-            command.Parameters.AddWithValue("@receipt", t.Receipt);
             command.Parameters.AddWithValue("@employeeID", t.FK_EmployeeID);
             _conn.Open();
             bool ret = (await command.ExecuteNonQueryAsync()) == 1;
