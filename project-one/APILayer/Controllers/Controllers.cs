@@ -50,11 +50,16 @@ public class EmployeeManagementSystemController : ControllerBase
     {
         if(ModelState.IsValid)
         {
-            return Ok(await this._bus.LoginAsync(login.Username, login.Password));
+            if(await this._bus.LoginAsync(login.Username, login.Password))
+            {
+                return Ok("Logged in");
+            }
+            
+            return Unauthorized("Wrong username or password");
         }
         else
         {
-            return Unauthorized("Unable to login");
+            return BadRequest("Unable to login");
         }
     }
 
