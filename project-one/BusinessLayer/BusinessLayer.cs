@@ -129,11 +129,11 @@ public class Bus
     {
         Ticket? updatedTicket = await this._repo.GetTicketByIDAsync(ticketID);
 
+        if(updatedTicket == null) return false;
+
         using BinaryReader reader = new BinaryReader(file);
 
         byte[] photo = reader.ReadBytes((int)file.Length);
-
-        if(updatedTicket == null) return false;
 
         bool isSuccess = await this._repo.UpdateTicketPhotoAsync(photo, ticketID);   
 
