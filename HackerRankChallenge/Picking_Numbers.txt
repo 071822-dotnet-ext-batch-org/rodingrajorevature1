@@ -1,0 +1,32 @@
+    public static int pickingNumbers(List<int> a)
+    {
+        List<int> sortedA = new List<int>(a);
+        List<List<int>> subarrays = new List<List<int>>();
+        subarrays.Add(new List<int>()); 
+        sortedA.Sort();
+        int currentElement = sortedA[0];
+        
+        int result = 0;
+        
+        for(int i = 1; i < sortedA.Count(); i++)
+        {       
+            if (Math.Abs(sortedA[i] - currentElement) > 1)
+            {
+                currentElement = sortedA[i];
+                subarrays.Add(new List<int>());              
+            }
+            else 
+            {
+                if(subarrays.Last().Count() == 0) subarrays.Last().Add(sortedA[i-1]);
+                subarrays.Last().Add(sortedA[i]);
+            }
+        }
+        
+        foreach (List<int> subarray in subarrays)
+        {
+            if(subarray.Count() > result) result = subarray.Count();
+        }
+        
+        return result;
+        
+    }

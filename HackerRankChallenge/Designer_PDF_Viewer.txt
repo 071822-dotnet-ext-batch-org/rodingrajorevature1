@@ -1,0 +1,20 @@
+    public static int designerPdfViewer(List<int> h, string word)
+    {
+        // declare new array of the heights of each letter in word
+        List<int> letterHeights = new List<int>();
+        
+        foreach (char letter in word)
+        {
+            // cast each letter in word as its ASCII code
+            // lowercase 'a' is ascii code 97, so subtract 97 from its ascii code to get its index in array 'h'
+            int index = (int)letter - 97;
+            // add the letter heights to our letter heights array
+            letterHeights.Add(h[index]);
+        }
+        
+        // get the max height from the letter heights
+        int maxH = letterHeights.Max();
+        
+        // multiply the word length with the max height
+        return word.Length * maxH;
+    }
